@@ -15,23 +15,22 @@ public class ObjectSpawner : ObjectPooler
 
     private Vector3 _direction;
 
-    public void SpawnAsteroids(int tag, int amount, Vector3 position, Vector3 direction)
+    public void SpawnLargeAsteroids(int amount)
+    {
+        for (int i = 1; i <= amount; i++)
+        {
+            var direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+            SpawnFromPool(0, Random.insideUnitCircle.normalized * spawnDistance, direction, poolDictionary);
+        }
+    }
+
+    public GameObject SpawnSmallerAsteroidOnce(int tag, Vector3 position, Vector3 direction)
     {
         if (direction == Vector3.zero)
         {
-            for (int i = 1; i <= amount; i++)
-            {
-                direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
-                SpawnFromPool(tag, position, direction, poolDictionary);
-            }
+            direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
         }
-        else
-        {
-            for (int i = 1; i <= amount; i++)
-            {
-                SpawnFromPool(tag, position, direction, poolDictionary);
-            }
-        }
+        return SpawnFromPool(tag, position, direction, poolDictionary);
     }
 
     private void OnDisabled()
@@ -50,7 +49,7 @@ public class ObjectSpawner : ObjectPooler
     private IEnumerator SpawnAsteroidWithDelay(float time, int amount)
     {
         yield return new WaitForSeconds(time);
-        SpawnAsteroids(0, amount, Random.insideUnitCircle.normalized * spawnDistance, Vector3.zero);
+        SpawnLargeAsteroids(amount);
     }
 
     private IEnumerator SpawnUFO(float time, int tag)

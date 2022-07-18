@@ -13,11 +13,6 @@ public class AsteroidOnTriggerEnterAction : MonoBehaviour
     private ScoreCounter _score;
     private ObjectSpawner _objectSpawner;
 
-    private void Update()
-    {
-        Debug.Log(_objectSpawner.SmallAsteroidsCounter);
-    }
-
     public void DestroyAsteroid()
     {
         asteroidDestroyed.Invoke(_tag);
@@ -59,8 +54,18 @@ public class AsteroidOnTriggerEnterAction : MonoBehaviour
 
     private void SpawnAfterDestroy()    
     {
-        _objectSpawner.SpawnAsteroids(_tag + 1, 1, transform.position, transform.up - transform.right);
-        _objectSpawner.SpawnAsteroids(_tag + 1, 1, transform.position, transform.up + transform.right);
+        var speed = Random.Range(1f, 3f);
+        SlightlySmallerAsteroid(transform.up - transform.right, speed);
+        SlightlySmallerAsteroid(transform.up + transform.right, speed);
+    }
+
+    private void SlightlySmallerAsteroid(Vector3 direction, float speed)
+    {
+        var smallerAsteroid = _objectSpawner.SpawnSmallerAsteroidOnce(_tag + 1, transform.position, direction);
+
+        if (smallerAsteroid == null) { return; }
+
+        smallerAsteroid.GetComponent<AsteroidMovement>().speed = speed;
     }
 
     private void OnTriggerEnter(Collider hitInfo)
@@ -82,7 +87,7 @@ public class AsteroidOnTriggerEnterAction : MonoBehaviour
     private IEnumerator RespawnWithDelay()
     {
         _objectSpawner.LargeAsteroidsCounter++;
-        _objectSpawner.SpawnAsteroids(0, _objectSpawner.LargeAsteroidsCounter, Random.insideUnitCircle.normalized * _objectSpawner.spawnDistance, Vector3.zero);
+        _objectSpawner.SpawnLargeAsteroids(_objectSpawner.LargeAsteroidsCounter);
         yield return new WaitForSeconds(2);
     }
 }

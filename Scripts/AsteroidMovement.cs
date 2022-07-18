@@ -10,12 +10,13 @@ public class AsteroidMovement : MonoBehaviour
 
     private void OnDisabled()
     {
+        Debug.Log("h");
+        speed = Random.Range(1f, 3f);
         StopAllCoroutines();
     }
 
     private void Start()
     {
-        speed = Random.Range(1f, 3f);
         StartCoroutine(MoveAsteroid());
     }
 
